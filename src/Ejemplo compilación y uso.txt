@@ -1,0 +1,3 @@
+$ user@pc:... /tp2/src$ g++ -w -std=c++11 -I ./../eigen-3.4.0/ eigen.h eigen.cpp types.h knn.h knn.cpp main.cpp pca.cpp -o tp
+$ user@pc:... /tp2/src$ ./tp ./../data/train10000.csv 20 5 ./../data/test00010.csv ./../out/out_10000_00010.csv
+
