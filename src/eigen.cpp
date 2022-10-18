@@ -1,41 +1,40 @@
-#include <algorithm>
-#include <chrono>
 #include <iostream>
 #include <random>
 #include <iterator>
 #include <vector>
+
 #include "eigen.h"
-#include "matrix.h"
 
 using namespace std;
 
-pair<double, vector<double>> powerIteration(Matrix A, int niter, int eps)
+pair<double, vector<double>> *PowerIteration(Matrix *A, int niter, double eps)
 {
-    vector<double> b = fillRandomVector(A.getM());
-    normalize(b);
+    vector<double> b = fillRandomVector(A->getM());
+    // normalize(b);
     bool stop = false;
 
-    int i = 0;
-    while (i < niter && stop == false)
-    {
-        vector<double> old = b;
-        mult(A, b);
-        normalize(b);
+    // int i = 0;
+    // while (i < niter && !stop)
+    // {
+    //     vector<double> old = b;
+    //     mult(A, b);
+    //     normalize(b);
 
-        double cosAngle = Vector_X_Vector(b, old);
-        if (((1 - eps) < cosAngle) && cosAngle <= 1)
-        {
-            stop = true;
-        }
-        i++;
-    }
-    double eigenvalue = Vector_X_Vector(b, multBis(A, b));
+    //     double cosAngle = Vector_X_Vector(b, old);
+    //     if (((1 - eps) < cosAngle) && cosAngle <= 1)
+    //     {
+    //         stop = true;
+    //     }
+    //     i++;
+    // }
+    // double eigenvalue = Vector_X_Vector(b, multBis(B, b));
 
-    return make_pair(eigenvalue, b);
+    // return make_pair(1, b);
+    //  return make_pair(eigenvalue, b);
 }
 
 // num : dimension matriz A;
-pair<vector<double>, vector<vector<double>>> eigen(Matrix A, int num, int niter, int eps)
+pair<vector<double>, vector<vector<double>>> *eigen(Matrix *A, int num, int niter, double eps)
 {
     // Matrix A = A;
     vector<double> eigenvalues;
@@ -44,18 +43,18 @@ pair<vector<double>, vector<vector<double>>> eigen(Matrix A, int num, int niter,
     int k = 0;
     while (k < num)
     {
-        std::pair<double, vector<double>> result = powerIteration(A, niter, eps);
+        std::pair<double, vector<double>> result = *PowerIteration(A, niter, eps);
 
         double l = result.first;
         vector<double> v = result.second;
 
         eigenvalues.push_back(l);
         eigenvectors.push_back(v);
-        A = Matrix_minus_Matrix(A, Scalar_X_Matrix(l, Vector_X_VectorT(v, v)));
+        *A = Matrix_minus_Matrix(*A, Scalar_X_Matrix(l, Vector_X_VectorT(v, v)));
         k++;
     }
 
-    return make_pair(eigenvalues, eigenvectors);
+    // return make_pair(eigenvalues, eigenvectors);
 }
 
 vector<double> fillRandomVector(int n)

@@ -1,13 +1,14 @@
 #ifndef __Eigen_H_INCLUDED__
 #define __Eigen_H_INCLUDED__
 
-#include "matrix.h"
 #include <iostream>
+#include "matrix.h"
+#include <vector>
 
 using namespace std;
 
-pair<double, vector<double>> *PowerIteration(Matrix *, int niter, int eps);
-pair<vector<double>, vector<vector<double>>> *eigen(Matrix *, int num, int niter, int eps);
+pair<double, vector<double>> *PowerIteration(Matrix *, int, double);
+pair<vector<double>, vector<vector<double>>> *eigen(Matrix *, int, int, double);
 vector<double> fillRandomVector(int n);
 void normalize(vector<double> &v);
 void mult(Matrix A, vector<double> &b);

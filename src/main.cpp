@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-
+#include <vector>
 #include "instance.h"
 #include "matrix.h"
 #include "eigen.h"
@@ -27,14 +27,31 @@ int main(int argc, char **argv)
 	}
 
 	ifstream archivoDeEntrada(argv[1]);
+	int niter = std::stoi(argv[2]);
+	double eps = std::stod(argv[3]);
 
 	instance *ins = generarInstanciaDesdeArchivo(archivoDeEntrada);
 
 	Matrix *X = ins->getMatrizDeEntrada();
 
-	X->printM();
+	// X->printM();
+	cout << "2" << endl;
 
-	double *respuesta = new double[34];
+	double eigenvalue;
+	double *eigenvector = new double[X->getM()];
+	Matrix *eigenvectors = new Matrix(X->getM(), X->getM());
+
+	// pair<double, double[]> *res = PowerIteration(*X, niter, eps);
+	cout << "3" << endl;
+
+	// pair<vector<double>, vector<vector<double>>> res = eigen(X, X->getM(), niter, eps);
+
+	// vector<double> eigenvalues = res.first;
+
+	// for (int k = 0; k < eigenvalues.size(); k++)
+	// {
+	// 	cout << eigenvalues[k] << endl;
+	// }
 
 	return 0;
 }
@@ -49,7 +66,7 @@ instance *generarInstanciaDesdeArchivo(ifstream &archivoDeEntrada)
 	{
 		for (int i = 0; i < n; i++)
 		{
-			for (int j = 0; i < n; i++)
+			for (int j = 0; j < n; j++)
 			{
 				archivoDeEntrada >> val;
 
