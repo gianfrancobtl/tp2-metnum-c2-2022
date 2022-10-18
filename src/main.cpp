@@ -3,13 +3,12 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "instance.h"
 #include "matrix.h"
 #include "eigen.h"
 
 using namespace std;
 
-instance *generarInstanciaDesdeArchivo(ifstream &archivoDeEntrada);
+Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada);
 
 // argumentos
 // 0 - main.-
@@ -30,19 +29,28 @@ int main(int argc, char **argv)
 	int niter = std::stoi(argv[2]);
 	double eps = std::stod(argv[3]);
 
-	instance *ins = generarInstanciaDesdeArchivo(archivoDeEntrada);
+	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada);
 
-	Matrix *X = ins->getMatrizDeEntrada();
-
-	// X->printM();
+	X->printM();
 	cout << "2" << endl;
 
 	double eigenvalue;
-	double *eigenvector = new double[X->getM()];
+	/* double *eigenvector = new double[X->getM()];
 	Matrix *eigenvectors = new Matrix(X->getM(), X->getM());
 
-	// pair<double, double[]> *res = PowerIteration(*X, niter, eps);
-	cout << "3" << endl;
+	Matrix * mat = new Matrix(2, 2);
+	mat->setVal(0, 0, 1);
+	mat->setVal(0, 1, 2);
+	mat->setVal(1, 0, 2);
+	mat->setVal(1, 1, 1);
+	mat->printM();
+ */
+	/* pair<double, double*> res = powerIteration(mat, niter, eps);
+	cout << "autovalor: " << res.first << endl;
+	cout << "autovector: " << endl;
+	for (int i = 0; i < 2; i++){
+		cout << "[" << res.second[i] << "], " << endl; 
+	} */
 
 	// pair<vector<double>, vector<vector<double>>> res = eigen(X, X->getM(), niter, eps);
 
@@ -52,18 +60,19 @@ int main(int argc, char **argv)
 	// {
 	// 	cout << eigenvalues[k] << endl;
 	// }
-
+	delete X;
 	return 0;
 }
 
-instance *generarInstanciaDesdeArchivo(ifstream &archivoDeEntrada)
+Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada)
 {
-	int n = 34;
+	int n = 2;
 	int val;
-	Matrix *MatrizDeEntrada = new Matrix(n, n);
+	Matrix *res = new Matrix(n, n);
 
 	if (archivoDeEntrada.is_open())
 	{
+		cout << "hola" << endl;
 		for (int i = 0; i < n; i++)
 		{
 			for (int j = 0; j < n; j++)
@@ -71,14 +80,10 @@ instance *generarInstanciaDesdeArchivo(ifstream &archivoDeEntrada)
 				archivoDeEntrada >> val;
 
 				// Seteo del valor 1 a la posición [i][j]:
-				MatrizDeEntrada->setVal(i, j, val);
+				res->setVal(i, j, val);
 			}
 		}
 	}
 
-	// Nueva instancia del resultado;
-	// Se setean la matriz W y la cantidad total de links entre las páginas.
-	instance *res = new instance();
-	res->setMatrizDeEntrada(MatrizDeEntrada);
 	return res;
-}
+} 

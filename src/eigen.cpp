@@ -7,36 +7,41 @@
 
 using namespace std;
 
-pair<double, vector<double>> *PowerIteration(Matrix *A, int niter, double eps)
+/* pair<double, double*> powerIteration(Matrix *A, int niter, double eps)
 {
-    vector<double> b = fillRandomVector(A->getM());
-    // normalize(b);
+    int dim = A->getM();
+    double* b = new double[dim];
+    fillRandomVector(b, dim);
+    normalize(b, dim);
     bool stop = false;
 
-    // int i = 0;
-    // while (i < niter && !stop)
-    // {
-    //     vector<double> old = b;
-    //     mult(A, b);
-    //     normalize(b);
+    int i = 0;
+    while (i < niter && !stop) {
+        double* old = copyVec(b, dim);
+        double* new_b = mult(A, b);
+        normalize(new_b, dim);
+        delete[] b;
 
-    //     double cosAngle = Vector_X_Vector(b, old);
-    //     if (((1 - eps) < cosAngle) && cosAngle <= 1)
-    //     {
-    //         stop = true;
-    //     }
-    //     i++;
-    // }
-    // double eigenvalue = Vector_X_Vector(b, multBis(B, b));
+        double cosAngle = dotProduct(new_b, old, dim);
+        if (((1 - eps) < cosAngle) && cosAngle <= 1)
+        {
+             stop = true;
+        }
+        i++;
+        double* b = copyVec(new_b, dim);        // b = new_b
+        delete[] new_b;
+        delete[] old;
+        }
 
-    // return make_pair(1, b);
-    //  return make_pair(eigenvalue, b);
-}
+    double* new_b = mult(A, b);
+    double eigenvalue = dotProduct(b, new_b, dim);
+    delete[] new_b;
+    return make_pair(eigenvalue, b);
+} */
 
-// num : dimension matriz A;
-pair<vector<double>, vector<vector<double>>> *eigen(Matrix *A, int num, int niter, double eps)
+
+/* pair<vector<double>, vector<vector<double>>> *eigen(Matrix *A, int num, int niter, double eps) // num : dimension matriz A;
 {
-    // Matrix A = A;
     vector<double> eigenvalues;
     vector<vector<double>> eigenvectors;
 
@@ -49,65 +54,67 @@ pair<vector<double>, vector<vector<double>>> *eigen(Matrix *A, int num, int nite
         vector<double> v = result.second;
 
         eigenvalues.push_back(l);
-        eigenvectors.push_back(v);
+        eigenvectors.push_back(v); // trasponer al final
         *A = Matrix_minus_Matrix(*A, Scalar_X_Matrix(l, Vector_X_VectorT(v, v)));
         k++;
     }
 
-    // return make_pair(eigenvalues, eigenvectors);
-}
+    //return make_pair(eigenvalues, eigenvectors);
+} */
 
-vector<double> fillRandomVector(int n)
+void fillRandomVector(double* v, int n)
 {
-    vector<double> v;
     srand((unsigned)time(NULL));
     double a = rand() % 100 + 1;
     for (int i = 0; i < n; i++)
     {
         double b = rand() % 20 + 1;
-        v.push_back(b);
+        v[i] = b;
     }
-    return v;
 }
 
-void normalize(vector<double> &v)
+void normalize(double* v, int n)
 {
     double sum = 0.00;
-    for (int i = 0; i < v.size(); i++)
+    for (int i = 0; i < n; i++)
     {
         sum = sum + double(v[i] * v[i]);
     }
     sum = double(sqrt(sum));
 
-    for (int j = 0; j < v.size(); j++)
+    for (int j = 0; j < n; j++)
     {
         v[j] /= sum;
     }
 }
 
-void mult(Matrix A, vector<double> &b)
+double* mult(Matrix *A, double* b)
 {
+    int dim = A->getM();
+    double *result = new double[dim]{0.00};
     double aux = 0.00;
-    for (int i = 0; i < A.getM(); i++)
+
+    for (int i = 0; i < dim; i++)
     {
-        for (int j = 0; j < A.getM(); j++)
+        for (int j = 0; j < dim; j++)
         {
-            aux += (A.getVal(i, j) * b[j]);
+            aux += (A->getVal(i, j) * b[j]);
         }
-        b[i] = aux;
+        result[i] = aux;
         aux = 0.00;
     }
+    return result;
 }
 
-vector<double> multBis(Matrix A, vector<double> b)
+vector<double> multBis(Matrix *A, vector<double> b)
 {
     vector<double> res;
     double aux = 0.00;
-    for (int i = 0; i < A.getM(); i++)
+    for (int i = 0; i < A->getM(); i++)
     {
-        for (int j = 0; j < A.getM(); j++)
+        for (int j = 0; j < A->getM(); j++)
         {
-            aux += (A.getVal(i, j) * b[j]);
+            aux += (A->getVal(i, j) * b[j]);
         }
         res.push_back(aux);
         aux = 0.00;
@@ -115,10 +122,10 @@ vector<double> multBis(Matrix A, vector<double> b)
     return res;
 }
 
-double Vector_X_Vector(vector<double> v, vector<double> w)
+double dotProduct(double* v, double* w, int n)
 {
     double res;
-    for (int i = 0; i < v.size(); i++)
+    for (int i = 0; i < n; i++)
     {
         res += v[i] * w[i];
     }
@@ -162,4 +169,12 @@ Matrix Scalar_X_Matrix(double n, Matrix B)
         }
     }
     return *res;
+}
+
+double* copyVec(double* v, int n){
+    double *res = new double[n];
+    for (int i = 0; i < n; i++){
+        res[i] = v[i];
+    }
+    return res;
 }

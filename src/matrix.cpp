@@ -9,9 +9,8 @@ using namespace std;
 // Matriz de n x m
 Matrix::Matrix(int _n, int _m) : m(_m), n(_n)
 {
-    matrix = new double *[n * m]; // 6
-    // inicializo la matriz de manera segura (evitando problemas de manejo de memoria)
-    for (int i = 0; i < n; i++) // 3
+    matrix = new double *[n];           // antes n*m
+    for (int i = 0; i < n; i++)
     {
         matrix[i] = new double[n]{0.0};
     }
