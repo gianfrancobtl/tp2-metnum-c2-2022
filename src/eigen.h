@@ -1,8 +1,12 @@
-#pragma once
-#include "types.h"
+#ifndef __Eigen_H_INCLUDED__
+#define __Eigen_H_INCLUDED__
 
-std::pair<double, Vector>
-    power_iteration(const Matrix& mat, unsigned num_iter=5000, double eps=1e-16);
+#include "matrix.h"
+#include <iostream>
 
-std::pair<Eigen::VectorXd, Matrix>
-    get_first_eigenvalues(const Matrix& mat, unsigned num, unsigned num_iter=5000, double epsilon=1e-16);
+using namespace std;
+
+pair<double, vector<double>> *PowerIteration(Matrix *, int niter, int eps);
+pair<vector<double>, vector<vector<double>>> *eigen(Matrix *, int num, int niter, int eps);
+
+#endif
