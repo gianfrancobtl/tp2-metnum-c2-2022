@@ -32,9 +32,11 @@ int main(int argc, char **argv)
 
 	Matrix *X = ins->getMatrizDeEntrada();
 
+	X->printM();
+
 	double *respuesta = new double[34];
 
-		return 0;
+	return 0;
 }
 
 instance *generarInstanciaDesdeArchivo(ifstream &archivoDeEntrada)
