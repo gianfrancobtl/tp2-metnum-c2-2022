@@ -7,60 +7,70 @@
 
 using namespace std;
 
-/* pair<double, double*> powerIteration(Matrix *A, int niter, double eps)
+pair<double, double*> powerIteration(Matrix *A, int niter, double eps)
 {
     int dim = A->getM();
     double* b = new double[dim];
+    double* old = new double[dim];
+    double* new_b = new double[dim];
+
     fillRandomVector(b, dim);
     normalize(b, dim);
     bool stop = false;
 
     int i = 0;
     while (i < niter && !stop) {
-        double* old = copyVec(b, dim);
-        double* new_b = mult(A, b);
-        normalize(new_b, dim);
-        delete[] b;
+        copyVec(old, b, dim);        // Copio el vector "b" en el vector "old" (old = b)
+        multToVec(new_b, A, b);      // Multiplico "A" y "b" y los inserto en "new_b"
+        normalize(new_b, dim);       // Normalizo "new_b"
 
         double cosAngle = dotProduct(new_b, old, dim);
-        if (((1 - eps) < cosAngle) && cosAngle <= 1)
-        {
-             stop = true;
-        }
+        if (((1 - eps) < cosAngle) && cosAngle <= 1){
+            stop = true;
+            }
+        
+        copyVec(b, new_b, dim);        // b = new_b
         i++;
-        double* b = copyVec(new_b, dim);        // b = new_b
-        delete[] new_b;
-        delete[] old;
         }
 
-    double* new_b = mult(A, b);
+    multToVec(new_b, A, b);            // new_b = A @ b
     double eigenvalue = dotProduct(b, new_b, dim);
-    delete[] new_b;
+    delete [] old;                     // elimino los vectores salvo "b" que lo devuelvo (le hago el delete afuera)
+    delete [] new_b;
     return make_pair(eigenvalue, b);
-} */
+}
 
 
-/* pair<vector<double>, vector<vector<double>>> *eigen(Matrix *A, int num, int niter, double eps) // num : dimension matriz A;
-{
-    vector<double> eigenvalues;
-    vector<vector<double>> eigenvectors;
+pair<double*, Matrix*>  eigen(Matrix *A, int niter, double eps){ //
+    int dim = A->getM();
 
-    int k = 0;
-    while (k < num)
+    double* eigenvalues = new double[dim];
+    Matrix* AV = new Matrix(dim, dim);     // matriz de autovectores por columnas, hay que hacerle delete
+    
+    double l = 0.00;
+    pair<double, double*> temp;
+
+    int i = 0;
+    while (i < dim)
     {
-        std::pair<double, vector<double>> result = *PowerIteration(A, niter, eps);
+        temp = powerIteration(A, niter, eps);       // hay que hacerle delete al res.second (double* creado en powerIteration)
+        
+        eigenvalues[i] = temp.first;                // agrego el autovalor al vector de autovalores
+        agregarVecAColumna(AV, temp.second, i);     // agrego el autovector a su columna correspondiente en la matriz AV
 
-        double l = result.first;
-        vector<double> v = result.second;
+        Matrix* AUX_MAT = new Matrix(dim, dim); 
+        vectorMult(AUX_MAT, temp.second, temp.second);     // Devuelve en AUX_MAT el producto entre los dos vectores
+        scalarMult(AUX_MAT, l);                            // Devuelve en AUX_MAT el producto escalar AUX_MAT*l 
+        restaMat(A, AUX_MAT);                              // Devuelve en A la resta A - AUX_MAT
 
-        eigenvalues.push_back(l);
-        eigenvectors.push_back(v); // trasponer al final
-        *A = Matrix_minus_Matrix(*A, Scalar_X_Matrix(l, Vector_X_VectorT(v, v)));
-        k++;
+        delete AUX_MAT;                             // delete de la matriz auxiliar creada para hacer las operaciones
+        delete[] temp.second;                       // delete del double* retornado en powerIteration
+        i++;
     }
 
-    //return make_pair(eigenvalues, eigenvectors);
-} */
+    pair<double*, Matrix*> res = make_pair(eigenvalues, AV);
+    return res;
+}
 
 void fillRandomVector(double* v, int n)
 {
@@ -88,10 +98,9 @@ void normalize(double* v, int n)
     }
 }
 
-double* mult(Matrix *A, double* b)
+void multToVec(double* v, Matrix *A, double* b)
 {
     int dim = A->getM();
-    double *result = new double[dim]{0.00};
     double aux = 0.00;
 
     for (int i = 0; i < dim; i++)
@@ -100,13 +109,12 @@ double* mult(Matrix *A, double* b)
         {
             aux += (A->getVal(i, j) * b[j]);
         }
-        result[i] = aux;
+        v[i] = aux;
         aux = 0.00;
     }
-    return result;
 }
 
-vector<double> multBis(Matrix *A, vector<double> b)
+/* vector<double> multBis(Matrix *A, vector<double> b)
 {
     vector<double> res;
     double aux = 0.00;
@@ -120,11 +128,11 @@ vector<double> multBis(Matrix *A, vector<double> b)
         aux = 0.00;
     }
     return res;
-}
+} */
 
 double dotProduct(double* v, double* w, int n)
 {
-    double res;
+    double res = 0.00;
     for (int i = 0; i < n; i++)
     {
         res += v[i] * w[i];
@@ -132,49 +140,52 @@ double dotProduct(double* v, double* w, int n)
     return res;
 }
 
-Matrix Vector_X_VectorT(vector<double> v, vector<double> w)
+void vectorMult(Matrix* AUX_MAT, double* v, double* w_t)
 {
-    Matrix *res = new Matrix(v.size(), w.size());
-    for (int i = 0; i < v.size(); i++)
+    int dim = AUX_MAT->getM();
+    for (int i = 0; i < dim; i++)
     {
-        for (int j = 0; j < w.size(); j++)
+        for (int j = 0; j < dim; j++)
         {
-            res->setVal(i, j, v[i] * w[j]);
+            AUX_MAT->setVal(i, j, v[i] * w_t[j]);
         }
     }
-    return *res;
 }
 
-Matrix Matrix_minus_Matrix(Matrix A, Matrix B)
-{
-    Matrix *res = new Matrix(A.getM(), A.getM());
-    for (int i = 0; i < A.getM(); i++)
+void restaMat (Matrix* A, Matrix* AUX_MAT){
+    int dim = A->getM();
+    for (int i = 0; i < dim; i++)
     {
-        for (int j = 0; j < A.getM(); j++)
+        for (int j = 0; j < dim; j++)
         {
-            res->setVal(i, j, A.getVal(i, j) - B.getVal(i, j));
+            double new_val = A->getVal(i, j) - AUX_MAT->getVal(i, j);
+            A->setVal(i, j, new_val);
         }
     }
-    return *res;
 }
 
-Matrix Scalar_X_Matrix(double n, Matrix B)
+void scalarMult(Matrix * AUX_MAT, double l)
 {
-    Matrix *res = new Matrix(B.getM(), B.getM());
-    for (int i = 0; i < B.getM(); i++)
+    int dim = AUX_MAT->getM();
+    for (int i = 0; i < dim; i++)
     {
-        for (int j = 0; j < B.getM(); j++)
+        for (int j = 0; j < dim; j++)
         {
-            res->setVal(i, j, n * B.getVal(i, j));
+            double new_val = l * AUX_MAT->getVal(i, j);
+            AUX_MAT->setVal(i, j, new_val);
         }
     }
-    return *res;
 }
 
-double* copyVec(double* v, int n){
-    double *res = new double[n];
+void copyVec(double* v, double* w, int n){
     for (int i = 0; i < n; i++){
-        res[i] = v[i];
+        v[i] = w[i];
     }
-    return res;
+}
+
+void agregarVecAColumna(Matrix* A, double* v, int col){  // Agrega el vector v a la columna i de la matriz A
+    int dim = A->getM();
+    for (int i = 0; i < dim; i++){
+        A->setVal(i, col, v[i]);
+    }
 }

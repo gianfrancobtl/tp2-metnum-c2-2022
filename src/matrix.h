@@ -22,6 +22,7 @@ public:
     double *mult_mat_vec(Matrix *m, double *b);
     double *restar_vec(double *a, double *b);
     double norma_2(double *a);
+    void copyMat(Matrix* m_orig);
 
     // Matriz *copy();
     void gauss(Matrix *m, double *b);

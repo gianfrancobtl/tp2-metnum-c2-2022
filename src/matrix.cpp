@@ -118,3 +118,12 @@ double Matrix::norma_2(double *a){
     sum = double (sqrt(sum));
     return sum;
 }
+
+void Matrix::copyMat(Matrix* m_orig){
+    int dim = m_orig->n;
+    for (int i = 0; i < dim; i++){
+        for (int j = 0; j < dim; j++){
+            this->matrix[i][j] = m_orig->matrix[i][j];
+        }
+    }
+}
