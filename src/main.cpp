@@ -8,13 +8,17 @@
 
 using namespace std;
 
-Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada);
+Matrix *generarMatrizDesdeArchivo(ifstream &, int);
+int encuentroDimensionMatrizEntrada(ifstream &);
 
 // argumentos
 // 0 - main.-
 // 1 - Matriz: archivo con la matriz de entrada.-
 // 2 - iter: cantidad de iteraciones.-
 // 3 - eps: tolerancia para la convergencia.-
+
+// Ejemplo para correr :
+// ./tp ../tests/karateclub_matriz.txt 5 0.00001
 int main(int argc, char **argv)
 {
 	cout << "Corriendo el programa..." << endl;
@@ -25,65 +29,87 @@ int main(int argc, char **argv)
 	}
 
 	ifstream archivoDeEntrada(argv[1]);
+
+	// Preparo archivo de salida 1:
+	ofstream archivoAutovalores;
+	archivoAutovalores.setf(ios::fixed, ios::floatfield);
+	archivoAutovalores.precision(3);
+	string nombreCarpetaAutovalores = "../tests/autovalores.out";
+
+	// Preparo archivo de salida 2:
+	ofstream archivoAutovectores;
+	archivoAutovectores.setf(ios::fixed, ios::floatfield);
+	archivoAutovectores.precision(3);
+	string nombreCarpetaAutovectores = "../tests/autovectores.out";
+
 	int niter = std::stoi(argv[2]);
 	double eps = std::stod(argv[3]);
 
-	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada);
+	int n = encuentroDimensionMatrizEntrada(archivoDeEntrada);
 
-	//X->printM();
+	// Generamos (copiamos) la matriz que dada por archivo.-
+	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada, n);
 
-	//double *eigenvector = new double[X->getM()];
-	//Matrix *eigenvectors = new Matrix(X->getM(), X->getM());
+	// // MATRIZ DE PRUEBA:
+	// Matrix *mat = new Matrix(2, 2);
+	// mat->setVal(0, 0, 1);
+	// mat->setVal(0, 1, 2);
+	// mat->setVal(1, 0, 2);
+	// mat->setVal(1, 1, 1);
+	// mat->printM();
 
-	Matrix * mat = new Matrix(2, 2);
-	mat->setVal(0, 0, 1);
-	mat->setVal(0, 1, 2);
-	mat->setVal(1, 0, 2);
-	mat->setVal(1, 1, 1);
-	mat->printM();
- 
-	pair<double, double*> res = powerIteration(mat, niter, eps);
-	
-	cout << "autovalor: " << res.first << endl;
-	cout << "autovector: " << endl;
-	for (int i = 0; i < 2; i++){
-		cout << "[" << res.second[i] << "], " << endl; 
+	// Copio la matriz original para que no sufra cambios (mat_copy = mat).-
+	Matrix *mat_copy = new Matrix(n, n);
+	mat_copy->copyMat(X);
+
+	// CORREMOS EL METODO DE LA POTENCIA CON DEFLACION.-
+	pair<double *, Matrix *> res = eigen(mat_copy, niter, eps);
+
+	// Delete de la matriz luego de usar la funcion.-
+	delete mat_copy;
+
+	// Abro los archivos de salida.-
+	archivoAutovectores.open(nombreCarpetaAutovectores);
+	archivoAutovalores.open(nombreCarpetaAutovalores);
+
+	// Cargo el archivo con los autovalores.-
+	for (int i = 0; i < n; i++)
+	{
+		archivoAutovalores << res.first[i] << endl;
 	}
-	
-	delete [] (res.second);   			  // Delete del vector despues de retornarlo
-	
-	Matrix* mat_copy = new Matrix (2, 2);
-	mat_copy->copyMat(mat);		          // copio la matriz original para que no sufra cambios (mat_copy = mat)
 
-	pair<double*, Matrix*>  res_2 = eigen(mat_copy, niter, eps);
-
-	delete mat_copy;                       // Delete de la matriz luego de usar la funcion
-
-	cout << "autovalores: " << res.first << endl;
-	for (int i = 0; i < 2; i++){
-		cout << "[" << res_2.first[i] << "], " << endl; 
+	// Cargo el archivo con los autovectores.-
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			archivoAutovectores << res.second->getVal(i, j) << ' ';
+		}
+		archivoAutovectores << endl;
 	}
-	cout << "autovectores: " << endl;
-	cout << "--------------" << endl;
-	res_2.second->printM();
 
-	delete[] (res_2.first);         // Delete de ambas estructuras (double* y Matrix*)
-	delete (res_2.second);
+	// Cierro los archivos de salida.-
+	archivoAutovalores.close();
+	archivoAutovectores.close();
 
-	delete mat;						// Delete de la matriz creada
+	// Delete de ambas estructuras (double* y Matrix*).-
+	delete[](res.first);
+	delete (res.second);
+
+	// Delete de la matriz creada.-
+	// delete mat;
 	delete X;
 	return 0;
 }
 
-Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada)
+Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 {
-	int n = 2;
 	int val;
+
 	Matrix *res = new Matrix(n, n);
 
 	if (archivoDeEntrada.is_open())
 	{
-		cout << "hola" << endl;
 		for (int i = 0; i < n; i++)
 		{
 			for (int j = 0; j < n; j++)
@@ -97,4 +123,16 @@ Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada)
 	}
 
 	return res;
-} 
+}
+
+int encuentroDimensionMatrizEntrada(ifstream &archivoDeEntrada)
+{
+	int res = 0;
+	std::string line;
+	while (std::getline(archivoDeEntrada, line))
+	{
+		res += 1;
+		cout << res << endl;
+	}
+	return res;
+}
