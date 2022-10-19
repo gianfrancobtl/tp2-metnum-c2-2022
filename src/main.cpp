@@ -45,8 +45,9 @@ int main(int argc, char **argv)
 	int niter = std::stoi(argv[2]);
 	double eps = std::stod(argv[3]);
 
-	//int dim = encuentroDimensionMatrizEntrada(archivoDeEntrada);
-	int dim = 34;
+	int dim = encuentroDimensionMatrizEntrada(archivoDeEntrada);
+	//int dim = 34;
+
 
 	// Generamos (copiamos) la matriz que dada por archivo.-
 	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada, dim);
@@ -136,7 +137,7 @@ Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 	return res;
 }
 
-/* int encuentroDimensionMatrizEntrada(ifstream &archivoDeEntrada)
+int encuentroDimensionMatrizEntrada(ifstream &archivoDeEntrada)
 {
 	int res = 0;
 	std::string line;
@@ -144,5 +145,7 @@ Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 	{
 		res += 1;
 	}
+	archivoDeEntrada.clear();               // Clear the eof and fail flags (para volver al inicio)
+	archivoDeEntrada.seekg(0);
 	return res;
-} */
+}
