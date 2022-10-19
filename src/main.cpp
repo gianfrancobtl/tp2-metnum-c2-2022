@@ -45,21 +45,28 @@ int main(int argc, char **argv)
 	int niter = std::stoi(argv[2]);
 	double eps = std::stod(argv[3]);
 
-	int n = encuentroDimensionMatrizEntrada(archivoDeEntrada);
+	//int dim = encuentroDimensionMatrizEntrada(archivoDeEntrada);
+	int dim = 34;
 
 	// Generamos (copiamos) la matriz que dada por archivo.-
-	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada, n);
+	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada, dim);
+	X->printM();
 
 	// // MATRIZ DE PRUEBA:
-	// Matrix *mat = new Matrix(2, 2);
-	// mat->setVal(0, 0, 1);
-	// mat->setVal(0, 1, 2);
-	// mat->setVal(1, 0, 2);
-	// mat->setVal(1, 1, 1);
-	// mat->printM();
-
+	/* Matrix *mat = new Matrix(3, 3);
+	mat->setVal(0, 0, 1);
+	mat->setVal(1, 0, 2);
+	mat->setVal(2, 0, 1);
+	mat->setVal(0, 1, 2);
+	mat->setVal(1, 1, 1);
+	mat->setVal(2, 1, 1);
+	mat->setVal(0, 2, 1);
+	mat->setVal(1, 2, 2);
+	mat->setVal(2, 2, 4);
+	mat->printM(); */
+ 
 	// Copio la matriz original para que no sufra cambios (mat_copy = mat).-
-	Matrix *mat_copy = new Matrix(n, n);
+	Matrix *mat_copy = new Matrix(dim, dim);
 	mat_copy->copyMat(X);
 
 	// CORREMOS EL METODO DE LA POTENCIA CON DEFLACION.-
@@ -73,15 +80,15 @@ int main(int argc, char **argv)
 	archivoAutovalores.open(nombreCarpetaAutovalores);
 
 	// Cargo el archivo con los autovalores.-
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < dim; i++)
 	{
 		archivoAutovalores << res.first[i] << endl;
 	}
 
 	// Cargo el archivo con los autovectores.-
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < dim; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < dim; j++)
 		{
 			archivoAutovectores << res.second->getVal(i, j) << ' ';
 		}
@@ -102,9 +109,12 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+
+
+
 Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 {
-	int val;
+	int val = 0;
 
 	Matrix *res = new Matrix(n, n);
 
@@ -118,6 +128,7 @@ Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 
 				// Seteo del valor 1 a la posición [i][j]:
 				res->setVal(i, j, val);
+				cout << "valor: "<< res << endl;
 			}
 		}
 	}
@@ -125,14 +136,13 @@ Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 	return res;
 }
 
-int encuentroDimensionMatrizEntrada(ifstream &archivoDeEntrada)
+/* int encuentroDimensionMatrizEntrada(ifstream &archivoDeEntrada)
 {
 	int res = 0;
 	std::string line;
 	while (std::getline(archivoDeEntrada, line))
 	{
 		res += 1;
-		cout << res << endl;
 	}
 	return res;
-}
+} */

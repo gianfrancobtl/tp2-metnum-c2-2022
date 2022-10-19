@@ -54,14 +54,16 @@ pair<double*, Matrix*>  eigen(Matrix *A, int niter, double eps){ //
     while (i < dim)
     {
         temp = powerIteration(A, niter, eps);       // hay que hacerle delete al res.second (double* creado en powerIteration)
-        
-        eigenvalues[i] = temp.first;                // agrego el autovalor al vector de autovalores
+
+        l = temp.first;                             // guardo el autovalor 
+        eigenvalues[i] = l;                         // agrego el autovalor al vector de autovalores
         agregarVecAColumna(AV, temp.second, i);     // agrego el autovector a su columna correspondiente en la matriz AV
 
-        Matrix* AUX_MAT = new Matrix(dim, dim); 
+        Matrix* AUX_MAT = new Matrix(dim, dim);
         vectorMult(AUX_MAT, temp.second, temp.second);     // Devuelve en AUX_MAT el producto entre los dos vectores
         scalarMult(AUX_MAT, l);                            // Devuelve en AUX_MAT el producto escalar AUX_MAT*l 
         restaMat(A, AUX_MAT);                              // Devuelve en A la resta A - AUX_MAT
+        //A->printM();
 
         delete AUX_MAT;                             // delete de la matriz auxiliar creada para hacer las operaciones
         delete[] temp.second;                       // delete del double* retornado en powerIteration
@@ -114,22 +116,6 @@ void multToVec(double* v, Matrix *A, double* b)
     }
 }
 
-/* vector<double> multBis(Matrix *A, vector<double> b)
-{
-    vector<double> res;
-    double aux = 0.00;
-    for (int i = 0; i < A->getM(); i++)
-    {
-        for (int j = 0; j < A->getM(); j++)
-        {
-            aux += (A->getVal(i, j) * b[j]);
-        }
-        res.push_back(aux);
-        aux = 0.00;
-    }
-    return res;
-} */
-
 double dotProduct(double* v, double* w, int n)
 {
     double res = 0.00;
@@ -164,14 +150,14 @@ void restaMat (Matrix* A, Matrix* AUX_MAT){
     }
 }
 
-void scalarMult(Matrix * AUX_MAT, double l)
+void scalarMult(Matrix* AUX_MAT, double l)
 {
     int dim = AUX_MAT->getM();
     for (int i = 0; i < dim; i++)
     {
         for (int j = 0; j < dim; j++)
         {
-            double new_val = l * AUX_MAT->getVal(i, j);
+            double new_val = l * (AUX_MAT->getVal(i, j));
             AUX_MAT->setVal(i, j, new_val);
         }
     }
