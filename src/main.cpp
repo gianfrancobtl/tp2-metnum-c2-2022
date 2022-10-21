@@ -21,51 +21,41 @@ int encuentroDimensionMatrizEntrada(ifstream &);
 // ./tp ../tests/karateclub_matriz.txt 5 0.00001
 int main(int argc, char **argv)
 {
-	cout << "Corriendo el programa..." << endl;
 	if (argc != 4)
 	{
 		cout << "Error, Faltan Argumentos." << endl;
 		return 1;
 	}
 
+	cout << "Corriendo el programa..." << endl;
+
 	ifstream archivoDeEntrada(argv[1]);
 
 	// Preparo archivo de salida 1:
 	ofstream archivoAutovalores;
 	archivoAutovalores.setf(ios::fixed, ios::floatfield);
-	archivoAutovalores.precision(3);
-	string nombreCarpetaAutovalores = "../tests/autovalores.out";
+	archivoAutovalores.precision(6);
+	string nombreCarpetaAutovalores = "./";
+	nombreCarpetaAutovalores += argv[1];
+	nombreCarpetaAutovalores += "_autovalores.out";
 
 	// Preparo archivo de salida 2:
 	ofstream archivoAutovectores;
 	archivoAutovectores.setf(ios::fixed, ios::floatfield);
-	archivoAutovectores.precision(3);
-	string nombreCarpetaAutovectores = "../tests/autovectores.out";
+	archivoAutovectores.precision(6);
+	string nombreCarpetaAutovectores = "./";
+	nombreCarpetaAutovectores += argv[1];
+	nombreCarpetaAutovectores += "_autovectores.out";
 
 	int niter = std::stoi(argv[2]);
 	double eps = std::stod(argv[3]);
 
 	int dim = encuentroDimensionMatrizEntrada(archivoDeEntrada);
-	//int dim = 34;
-
+	// int dim = 34;
 
 	// Generamos (copiamos) la matriz que dada por archivo.-
 	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada, dim);
-	X->printM();
 
-	// // MATRIZ DE PRUEBA:
-	/* Matrix *mat = new Matrix(3, 3);
-	mat->setVal(0, 0, 1);
-	mat->setVal(1, 0, 2);
-	mat->setVal(2, 0, 1);
-	mat->setVal(0, 1, 2);
-	mat->setVal(1, 1, 1);
-	mat->setVal(2, 1, 1);
-	mat->setVal(0, 2, 1);
-	mat->setVal(1, 2, 2);
-	mat->setVal(2, 2, 4);
-	mat->printM(); */
- 
 	// Copio la matriz original para que no sufra cambios (mat_copy = mat).-
 	Matrix *mat_copy = new Matrix(dim, dim);
 	mat_copy->copyMat(X);
@@ -105,13 +95,9 @@ int main(int argc, char **argv)
 	delete (res.second);
 
 	// Delete de la matriz creada.-
-	// delete mat;
 	delete X;
 	return 0;
 }
-
-
-
 
 Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 {
@@ -129,11 +115,9 @@ Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 
 				// Seteo del valor 1 a la posición [i][j]:
 				res->setVal(i, j, val);
-				cout << "valor: "<< res << endl;
 			}
 		}
 	}
-
 	return res;
 }
 
@@ -145,7 +129,7 @@ int encuentroDimensionMatrizEntrada(ifstream &archivoDeEntrada)
 	{
 		res += 1;
 	}
-	archivoDeEntrada.clear();               // Clear the eof and fail flags (para volver al inicio)
+	archivoDeEntrada.clear(); // Clear the eof and fail flags (para volver al inicio)
 	archivoDeEntrada.seekg(0);
 	return res;
 }
