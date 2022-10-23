@@ -55,6 +55,7 @@ pair<double *, Matrix *> eigen(Matrix *A, int niter, double eps)
     int i = 0;
     while (i < dim)
     {
+
         temp = powerIteration(A, niter, eps); // hay que hacerle delete al res.second (double* creado en powerIteration)
 
         l = temp.first;                         // guardo el autovalor

@@ -60,7 +60,9 @@ int main(int argc, char **argv)
 	Matrix *mat_copy = new Matrix(dim, dim);
 	mat_copy->copyMat(X);
 
-	// CORREMOS EL METODO DE LA POTENCIA CON DEFLACION.-
+	// mat_copy->printM();
+	//  CORREMOS EL METODO DE LA POTENCIA CON DEFLACION.-
+
 	pair<double *, Matrix *> res = eigen(mat_copy, niter, eps);
 
 	// Delete de la matriz luego de usar la funcion.-
@@ -101,7 +103,7 @@ int main(int argc, char **argv)
 
 Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 {
-	int val = 0;
+	double val = 0;
 
 	Matrix *res = new Matrix(n, n);
 

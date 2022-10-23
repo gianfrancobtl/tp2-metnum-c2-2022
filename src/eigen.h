@@ -8,28 +8,27 @@
 using namespace std;
 
 // Metodo potencia
-pair<double, double*> powerIteration(Matrix*, int, double);
+pair<double, double *> powerIteration(Matrix *, int, double);
 
 // Deflacion
-pair<double*, Matrix*> eigen(Matrix*, int, double);
-
+pair<double *, Matrix *> eigen(Matrix *, int, double);
 
 //---------- Auxiliares ----------//
-void fillRandomVector(double* v, int n);
-void normalize(double* v, int n);
+void fillRandomVector(double *v, int n);
+void normalize(double *v, int n);
 
 // Multiplico "A" y "b" y los inserto en "v"
-void multToVec(double* v, Matrix* A, double* b);
+void multToVec(double *v, Matrix *A, double *b);
 
-
+// covariance-matrix-fb.txt
 vector<double> multBis(Matrix *A, vector<double> b);
-double dotProduct(double* v, double* w, int n);
-void vectorMult(Matrix* AUX_MAT, double* v, double* w);
-void restaMat(Matrix* A, Matrix* AUX_MAT);
-void scalarMult(Matrix * AUX_MAT, double l);
-void agregarVecAColumna(Matrix* A, double* v, int col);
+double dotProduct(double *v, double *w, int n);
+void vectorMult(Matrix *AUX_MAT, double *v, double *w);
+void restaMat(Matrix *A, Matrix *AUX_MAT);
+void scalarMult(Matrix *AUX_MAT, double l);
+void agregarVecAColumna(Matrix *A, double *v, int col);
 
 // copio el vector w en el vector v sin cambiar los punteros
-void copyVec(double* v, double* w, int n);   
+void copyVec(double *v, double *w, int n);
 
 #endif
