@@ -60,7 +60,6 @@ int main(int argc, char **argv)
 	Matrix *mat_copy = new Matrix(dim, dim);
 	mat_copy->copyMat(X);
 
-	// mat_copy->printM();
 	//  CORREMOS EL METODO DE LA POTENCIA CON DEFLACION.-
 
 	pair<double *, Matrix *> res = eigen(mat_copy, niter, eps);
