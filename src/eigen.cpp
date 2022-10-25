@@ -57,7 +57,6 @@ pair<double *, Matrix *> eigen(Matrix *A, int niter, double eps)
     {
 
         temp = powerIteration(A, niter, eps); // hay que hacerle delete al res.second (double* creado en powerIteration)
-
         l = temp.first;                         // guardo el autovalor
         eigenvalues[i] = l;                     // agrego el autovalor al vector de autovalores
         agregarVecAColumna(AV, temp.second, i); // agrego el autovector a su columna correspondiente en la matriz AV

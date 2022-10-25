@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	// Preparo archivo de salida 1:
 	ofstream archivoAutovalores;
 	archivoAutovalores.setf(ios::fixed, ios::floatfield);
-	archivoAutovalores.precision(6);
+	archivoAutovalores.precision(10);
 	string nombreCarpetaAutovalores = "./";
 	nombreCarpetaAutovalores += argv[1];
 	nombreCarpetaAutovalores += "_autovalores.out";
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	// Preparo archivo de salida 2:
 	ofstream archivoAutovectores;
 	archivoAutovectores.setf(ios::fixed, ios::floatfield);
-	archivoAutovectores.precision(6);
+	archivoAutovectores.precision(10);
 	string nombreCarpetaAutovectores = "./";
 	nombreCarpetaAutovectores += argv[1];
 	nombreCarpetaAutovectores += "_autovectores.out";
@@ -51,7 +51,6 @@ int main(int argc, char **argv)
 	double eps = std::stod(argv[3]);
 
 	int dim = encuentroDimensionMatrizEntrada(archivoDeEntrada);
-	// int dim = 34;
 
 	// Generamos (copiamos) la matriz que dada por archivo.-
 	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada, dim);
@@ -74,6 +73,7 @@ int main(int argc, char **argv)
 	// Cargo el archivo con los autovalores.-
 	for (int i = 0; i < dim; i++)
 	{
+		cout << res.first[i] << endl;
 		archivoAutovalores << res.first[i] << endl;
 	}
 
