@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include "matrix.h"
-#include "eigen.h"
+#include "eigen.cpp"
+#include <Eigen/Dense>
 
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
 using namespace std;
 
-Matrix *generarMatrizDesdeArchivo(ifstream &, int);
+MatrixXd generarMatrizDesdeArchivo(ifstream &, int);
 int encuentroDimensionMatrizEntrada(ifstream &);
 
 // argumentos
@@ -53,18 +54,13 @@ int main(int argc, char **argv)
 	int dim = encuentroDimensionMatrizEntrada(archivoDeEntrada);
 
 	// Generamos (copiamos) la matriz que dada por archivo.-
-	Matrix *X = generarMatrizDesdeArchivo(archivoDeEntrada, dim);
+	MatrixXd X = generarMatrizDesdeArchivo(archivoDeEntrada, dim);
 
 	// Copio la matriz original para que no sufra cambios (mat_copy = mat).-
-	Matrix *mat_copy = new Matrix(dim, dim);
-	mat_copy->copyMat(X);
+	MatrixXd mat_copy = X;
 
 	//  CORREMOS EL METODO DE LA POTENCIA CON DEFLACION.-
-
-	pair<double *, Matrix *> res = eigen(mat_copy, niter, eps);
-
-	// Delete de la matriz luego de usar la funcion.-
-	delete mat_copy;
+	pair<VectorXd, MatrixXd> res = eigen(mat_copy, niter, eps);
 
 	// Abro los archivos de salida.-
 	archivoAutovectores.open(nombreCarpetaAutovectores);
@@ -76,13 +72,14 @@ int main(int argc, char **argv)
 		cout << res.first[i] << endl;
 		archivoAutovalores << res.first[i] << endl;
 	}
-
+	
+	cout << res.second << endl;
 	// Cargo el archivo con los autovectores.-
 	for (int i = 0; i < dim; i++)
 	{
 		for (int j = 0; j < dim; j++)
 		{
-			archivoAutovectores << res.second->getVal(i, j) << ' ';
+			archivoAutovectores << res.second.coeff(i, j) << ' ';
 		}
 		archivoAutovectores << endl;
 	}
@@ -91,20 +88,13 @@ int main(int argc, char **argv)
 	archivoAutovalores.close();
 	archivoAutovectores.close();
 
-	// Delete de ambas estructuras (double* y Matrix*).-
-	delete[](res.first);
-	delete (res.second);
-
-	// Delete de la matriz creada.-
-	delete X;
 	return 0;
 }
 
-Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
+MatrixXd generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 {
 	double val = 0;
-
-	Matrix *res = new Matrix(n, n);
+	MatrixXd res(n, n);
 
 	if (archivoDeEntrada.is_open())
 	{
@@ -115,7 +105,7 @@ Matrix *generarMatrizDesdeArchivo(ifstream &archivoDeEntrada, int n)
 				archivoDeEntrada >> val;
 
 				// Seteo del valor 1 a la posición [i][j]:
-				res->setVal(i, j, val);
+				res(i, j) = val;
 			}
 		}
 	}

@@ -68,6 +68,16 @@
     "*.tcc": "cpp",
     "clocale": "cpp",
     "memory_resource": "cpp",
-    "numeric": "cpp"
+    "numeric": "cpp",
+    "__tree": "cpp",
+    "condition_variable": "cpp",
+    "future": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "queue": "cpp",
+    "set": "cpp",
+    "thread": "cpp",
+    "unordered_set": "cpp",
+    "valarray": "cpp"
   }
 }
