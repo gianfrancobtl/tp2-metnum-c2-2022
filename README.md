@@ -1,4 +1,4 @@
-# Reconocimiento de dígitos: TP2 de Métodos Numéricos
+# TP2 de Métodos Numéricos
 ## 2022, 2do cuatrimestre
 
 ## Instrucciones
@@ -14,7 +14,7 @@ cd tp2-metnum-c2-2022/src
 2. Compilar el programa
 
 ```
-python metnum.py
+sh compile
 ``` 
 
 ## Correr el programa
@@ -26,5 +26,5 @@ python metnum.py
 Ejemplo:
 
 ```
-./tp karateclub_matriz.txt 1000 0.0001
+./tp ../tests/karateclub_matriz.txt 10000 0.00001
 ```

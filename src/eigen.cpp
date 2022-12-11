@@ -1,6 +1,4 @@
 #include <iostream>
-#include <random>
-#include <iterator>
 #include <Eigen/Dense>
 
 using namespace std;
@@ -15,10 +13,8 @@ MatrixXd agregarVecAColumna(MatrixXd A, VectorXd v, int col);
 pair<double, VectorXd> powerIteration(MatrixXd A, int niter, double eps)
 {
     VectorXd b = normalize(VectorXd::Random(A.cols()));
-
     VectorXd old(A.cols());
     VectorXd new_b(A.cols());
-
     bool stop = false;
 
     int i = 0;
@@ -45,7 +41,8 @@ pair<double, VectorXd> powerIteration(MatrixXd A, int niter, double eps)
 pair<VectorXd, MatrixXd> eigen(MatrixXd A, int niter, double eps)
 {
     VectorXd eigenvalues(A.cols());
-    MatrixXd AV(A.cols(), A.cols()); // matriz de autovectores por columnas
+    // Matriz de autovectores por columnas:
+    MatrixXd AV(A.cols(), A.cols());
 
     double l = 0.00;
     pair<double, VectorXd> temp;
@@ -54,18 +51,12 @@ pair<VectorXd, MatrixXd> eigen(MatrixXd A, int niter, double eps)
     while (i < A.cols())
     {
         temp = powerIteration(A, niter, eps);
-
-        cout << "VECTOR B!!!!!!!!!   " << temp.second << endl;
-        cout << "\n"
-             << endl;
-
-        l = temp.first;                              // guardo el autovalor
-        eigenvalues[i] = l;                          // agrego el autovalor al vector de autovalores
-        AV = agregarVecAColumna(AV, temp.second, i); // agrego el autovector a su columna correspondiente en la matriz AV
-
-        cout << "MATRIZ AV!!!!!!!!!   " << temp.second << endl;
-
-        cout << AV << endl;
+        // Guardo el autovalor:
+        l = temp.first;
+        // Agrego el autovalor al vector de autovalores
+        eigenvalues[i] = l;
+        // Agrego el autovector a su columna correspondiente en la matriz AV:
+        AV = agregarVecAColumna(AV, temp.second, i);
         MatrixXd AUX_MAT(A.cols(), A.cols());
         AUX_MAT = temp.second * temp.second.transpose();
         AUX_MAT *= l;

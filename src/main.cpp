@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 		cout << res.first[i] << endl;
 		archivoAutovalores << res.first[i] << endl;
 	}
-	
+
 	cout << res.second << endl;
 	// Cargo el archivo con los autovectores.-
 	for (int i = 0; i < dim; i++)
