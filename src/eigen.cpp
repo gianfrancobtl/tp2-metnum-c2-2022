@@ -28,11 +28,9 @@ pair<double, VectorXd> powerIteration(MatrixXd A, int niter, double eps)
         {
             stop = true;
         }
-
         b = new_b;
         i++;
     }
-
     new_b = A * b;
     double eigenvalue = b.dot(new_b);
     return make_pair(eigenvalue, b);
@@ -41,33 +39,16 @@ pair<double, VectorXd> powerIteration(MatrixXd A, int niter, double eps)
 pair<VectorXd, MatrixXd> eigen(MatrixXd A, int niter, double eps)
 {
     VectorXd eigenvalues(A.cols());
-    // Matriz de autovectores por columnas:
     MatrixXd AV(A.cols(), A.cols());
-
-    double l = 0.00;
     pair<double, VectorXd> temp;
 
-    int i = 0;
-    while (i < A.cols())
+    for (int i = 0; i < A.cols(); i++)
     {
         temp = powerIteration(A, niter, eps);
-        // Guardo el autovalor:
-        l = temp.first;
-        // Agrego el autovalor al vector de autovalores
-        eigenvalues[i] = l;
-        // Agrego el autovector a su columna correspondiente en la matriz AV:
+        eigenvalues[i] = temp.first;
         AV = agregarVecAColumna(AV, temp.second, i);
-        MatrixXd AUX_MAT(A.cols(), A.cols());
-        AUX_MAT = temp.second * temp.second.transpose();
-        AUX_MAT *= l;
-        A -= AUX_MAT;
-
-        i++;
+        A -= temp.first * (temp.second * temp.second.transpose());
     }
-    cout << "MATRIZ AV!!!!!!!!!   " << temp.second << endl;
-
-    cout << AV << endl;
-
     pair<VectorXd, MatrixXd> res = make_pair(eigenvalues, AV);
     return res;
 }
